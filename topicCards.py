@@ -10,10 +10,6 @@ from anki.scheduler.v3 import CardAnswer
 from aqt import reviewer
 from anki.consts import BUTTON_ONE
 
-
-def aiRewrites():
-    showInfo("Funcionalidad AI")
-
 # We're going to add a menu item below. First we want to create a function to
 # be called when the menu item is activated.
 def searchTopic(card):
@@ -21,17 +17,6 @@ def searchTopic(card):
     note = card.note()
     fields = note.fields
     return fields[2]
-
-
-def testFunction() -> None:
-    # get the number of cards in the current collection, which is stored in
-    # the main window
-    cardCount = mw.col.cardCount()
-    # show a message box
-    
-
-    
-
 
 # create a new menu item, "test"
 action = QAction("test", mw)
@@ -52,14 +37,8 @@ def process_cards(scheduler, number_of_cards):
             topic = None
 
 
-    #while (prev_topic != topic) or isFirstCard:
-    for i in range(4):    
-        showInfo(f"Procesando tarjeta {card.id}")
-        showInfo(str(i))
-
-        #showInfo(f"prev_topic = {prev_topic}")
-        #showInfo(f"topic = {topic}")
-
+    while (prev_topic != topic) or isFirstCard:
+    #for i in range(4):    
         # Obtener la siguiente tarjeta
         #showInfo("En bucle While")
         queued_card = scheduler.get_queued_cards()
@@ -76,6 +55,10 @@ def process_cards(scheduler, number_of_cards):
 
         topic = searchTopic(card)
 
+        #showInfo(f"Procesando tarjeta {card.id}")
+        #showInfo(f"prev_topic = {prev_topic}")
+        #showInfo(f"topic = {topic}")
+
         
 
         if topic == prev_topic and not isFirstCard:
@@ -83,11 +66,13 @@ def process_cards(scheduler, number_of_cards):
             break
         else:    
             # Responder la tarjeta
-            showInfo("else final")
+            #showInfo("else final")
             states = scheduler.col._backend.get_scheduling_states(card.id)
             answer = scheduler.build_answer(card=card, states=states, rating=CardAnswer.AGAIN)
             if isFirstCard:
                 prev_topic = topic
+            topic = None
+
             isFirstCard = False
             scheduler.answer_card(answer)   
 
