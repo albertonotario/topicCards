@@ -43,32 +43,55 @@ mw.form.menuTools.addAction(action)
 
 def process_cards(scheduler, number_of_cards):
     
+    isFirstCard = True
+
     if mw.state == "review":
         card = mw.reviewer.card
-        prev_topic = searchTopic(card)
+        prev_topic = None
+        if isFirstCard:
+            topic = None
 
-    while prev_topic != topic:
+
+    #while (prev_topic != topic) or isFirstCard:
+    for i in range(4):    
+        showInfo(f"Procesando tarjeta {card.id}")
+        showInfo(str(i))
+
+        #showInfo(f"prev_topic = {prev_topic}")
+        #showInfo(f"topic = {topic}")
+
         # Obtener la siguiente tarjeta
+        #showInfo("En bucle While")
         queued_card = scheduler.get_queued_cards()
         if not queued_card.cards:
             showInfo("No hay más tarjetas")
             break
+
+       
 
         card = scheduler.getCard()
         if card is None:
             showInfo("No hay más tarjetas")
             break
 
-        #showInfo(f"Procesando tarjeta {card.id}")
         topic = searchTopic(card)
-        if topic == 'Asia':
-            showInfo("Tarjeta de Asia encontrada")
+
+        
+
+        if topic == prev_topic and not isFirstCard:
+            showInfo("Tarjeta encontrada")
             break
         else:    
             # Responder la tarjeta
+            showInfo("else final")
             states = scheduler.col._backend.get_scheduling_states(card.id)
             answer = scheduler.build_answer(card=card, states=states, rating=CardAnswer.AGAIN)
-            scheduler.answer_card(answer)
+            if isFirstCard:
+                prev_topic = topic
+            isFirstCard = False
+            scheduler.answer_card(answer)   
+
+
 
 
 
